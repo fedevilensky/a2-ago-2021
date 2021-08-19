@@ -24,7 +24,7 @@ En ambos casos vamos a tener que [instalar los compiladores](#instalar-compilado
 # WSL
 [Instrucciones de Microsoft](https://docs.microsoft.com/en-us/windows/wsl/install-win10#manual-installation-steps)
 
-1. Abrir powershel COMO ADMINISTRADOR y escribir 
+1. Abrir powershell COMO ADMINISTRADOR y escribir 
 ```powershell
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 ```
