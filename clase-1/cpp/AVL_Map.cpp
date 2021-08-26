@@ -41,11 +41,11 @@ class AVL
 
         IteratorNode load(AVLNode node)
         {
-            if (node == null)
+            if (node == nullptr)
             {
-                return null;
+                return nullptr;
             }
-            else if (node->left == null)
+            else if (node->left == nullptr)
             {
                 auto itNode = new IteratorNode(node->data);
                 itNode->next = load(node->right);

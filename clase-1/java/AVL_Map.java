@@ -348,13 +348,15 @@ public class AVL_Map {
       //TODO
     }
 
-    public Set<T> join(Set<T> other){
-      var it = other.tree.iterator();
-      T data = it.
-      while(it.hasNext()){
-      // returns the union of this set and other set
-      //TODO
-      return null;
+    public void join(Set<T> other){
+      // var it = other.tree.iterator();
+      // while(it.hasNext()){
+      //   T data = it.next();
+      //   this.add(data);
+      // }
+      for (T data : other.tree) {
+        this.add(data);
+      }
     }
 
     public Set<T> intersect(Set<T> other){
