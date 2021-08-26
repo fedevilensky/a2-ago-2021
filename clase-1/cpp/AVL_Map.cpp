@@ -17,6 +17,9 @@ class AVL
         {
             this->data = data;
             this->height = 1;
+            this->left = nullptr;
+            this->right = nullptr;
+            this->parent = nullptr;
         }
 
         ~AVLNode(){
@@ -183,8 +186,8 @@ private:
                 //node->right = ;
             }
             node->updateHeight();
-            return balance(node);
         }
+        return balance(node);
     }
 
     T findMax(AVLNode *node)
@@ -232,6 +235,7 @@ private:
                 }
             }
         }
+        return Z;
     }
 
     AVLNode *RightRotation(AVLNode *Z)
