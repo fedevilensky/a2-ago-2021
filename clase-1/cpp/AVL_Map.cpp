@@ -1,10 +1,66 @@
-#include <stdlib.h> //abs
+#include <stdlib.h>  //abs
 #include <algorithm> //max
-#include <iostream> //cout
+#include <iostream>  //cout
 
 template <class T>
 class AVL
 {
+    class AVLIterator
+    {
+        struct IteratorNode
+        {
+            T data;
+            IteratorNode next;
+
+            IteratorNode(T data)
+            {
+                this.data = data;
+                this.next = null;
+            }
+        };
+
+    public:
+        AVLIterator(AVLNode root)
+        {
+            actual = load(root);
+        }
+
+        boolean hasNext()
+        {
+            return this.actual->next != nullptr;
+        }
+
+        T next()
+        {
+            this.actual = this.actual->next;
+            return this.actual->data;
+        }
+
+    private:
+        IteratorNode *actual;
+
+        IteratorNode load(AVLNode node)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+            else if (node->left == null)
+            {
+                auto itNode = new IteratorNode(node->data);
+                itNode->next = load(node->right);
+                return itNode;
+            }
+            else
+            {
+                auto itNode = load(node->left);
+                itNode->next = new IteratorNode(node->data);
+                itNode->next->next = load(node->right);
+                return itNode;
+            }
+        }
+    };
+
     struct AVLNode
     {
         AVLNode *left;
@@ -22,8 +78,9 @@ class AVL
             this->parent = nullptr;
         }
 
-        ~AVLNode(){
-            if(this->left != nullptr)
+        ~AVLNode()
+        {
+            if (this->left != nullptr)
                 delete this->left;
             if (this->right != nullptr)
                 delete this->right;
@@ -43,6 +100,12 @@ class AVL
     };
 
 public:
+
+    AVLIterator iterator()
+    {
+        return AVLIterator(root);
+    }
+
     void add(T data)
     {
         //chequear si pertenece antes de sumar
@@ -62,16 +125,18 @@ public:
     bool contains(T data)
     {
         auto node = root;
-        while(node != nullptr)
+        while (node != nullptr)
         {
-            if(data < node->data)
+            if (data < node->data)
             {
                 node = node->left;
             }
-            else if(data > node->data){
+            else if (data > node->data)
+            {
                 node = node->right;
             }
-            else{
+            else
+            {
                 return true;
             }
         }
@@ -81,16 +146,18 @@ public:
     T find(T data)
     {
         auto node = root;
-        while(node != nullptr)
+        while (node != nullptr)
         {
-            if(data < node->data)
+            if (data < node->data)
             {
                 node = node->left;
             }
-            else if(data > node->data){
+            else if (data > node->data)
+            {
                 node = node->right;
             }
-            else{
+            else
+            {
                 return node->data;
             }
         }
@@ -112,11 +179,13 @@ private:
     AVLNode *root;
     int elements;
 
-    AVLNode *insert(AVLNode *node, T data){
-        if(node == nullptr){
+    AVLNode *insert(AVLNode *node, T data)
+    {
+        if (node == nullptr)
+        {
             return new AVLNode(data);
         }
-        if(data < node->data)
+        if (data < node->data)
         {
             node->left = insert(node->left, data);
             node->left->parent = node;
@@ -132,9 +201,9 @@ private:
 
     AVLNode *remove(AVLNode *node, T data)
     {
-        if(node == nullptr)
+        if (node == nullptr)
             return nullptr;
-        if(data < node->data)
+        if (data < node->data)
         {
             node->left = remove(node->left, data);
         }
@@ -144,38 +213,42 @@ private:
         }
         else
         {
-            if(node->left == nullptr && node->right == nullptr)
+            if (node->left == nullptr && node->right == nullptr)
             {
-                if(node->parent != nullptr)
+                if (node->parent != nullptr)
                 {
-                    if (data > node->parent->data){
+                    if (data > node->parent->data)
+                    {
                         node->parent->right = nullptr;
                     }
-                    else{
+                    else
+                    {
                         node->parent->left = nullptr;
                     }
                 }
                 delete node;
             }
-            else if(node->left == nullptr)
+            else if (node->left == nullptr)
             {
                 auto temp = node->right;
-                if(node->parent != nullptr)
+                if (node->parent != nullptr)
                 {
-                    if (data > node->parent->data){
+                    if (data > node->parent->data)
+                    {
                         node->parent->right = temp;
-                       
                     }
-                    else{
+                    else
+                    {
                         node->parent->left = temp;
                     }
-                } 
+                }
                 temp->parent = node->parent;
                 node->right = nullptr;
                 delete node;
                 return temp;
             }
-            else if(node->right == nullptr){
+            else if (node->right == nullptr)
+            {
                 // TODO
             }
             else
@@ -200,13 +273,15 @@ private:
         int lHeight = Z->left != nullptr ? Z->left->height : 0;
         int rHeight = Z->right != nullptr ? Z->right->height : 0;
 
-        if(std::abs(lHeight - rHeight) > 1){
-            if(lHeight > rHeight){
+        if (std::abs(lHeight - rHeight) > 1)
+        {
+            if (lHeight > rHeight)
+            {
                 // Left - X
                 auto Y = Z->left;
                 int YlHeight = Y->left != nullptr ? Y->left->height : 0;
                 int YrHeight = Y->right != nullptr ? Y->right->height : 0;
-                if(YlHeight > YrHeight)
+                if (YlHeight > YrHeight)
                 {
                     //Left-Left
                     Z = RightRotation(Z);
@@ -216,14 +291,14 @@ private:
                     //Left-Right
                     Z = LeftRightRotation(Z);
                 }
-            } 
+            }
             else
             {
                 //Right - X
                 auto Y = Z->right;
                 int YlHeight = Y->left != nullptr ? Y->left->height : 0;
                 int YrHeight = Y->right != nullptr ? Y->right->height : 0;
-                if(YlHeight > YrHeight)
+                if (YlHeight > YrHeight)
                 {
                     //Right-Left
                     Z = RightLeftRotation(Z);
@@ -255,16 +330,15 @@ private:
         //    / \    /
         //   r      X
         Z->left = Y->right;
-        if(Y->right != nullptr)
+        if (Y->right != nullptr)
         {
             Y->right->parent = Z;
         }
         Z->updateHeight();
 
-
         //     p
         //     |
-        //     Y 
+        //     Y
         //    / \
         //   X   Z
         //      /
@@ -273,7 +347,7 @@ private:
         Y->parent = Z->parent;
         Z->parent = Y;
 
-        if(Y->parent != nullptr)
+        if (Y->parent != nullptr)
         {
             if (Y->data > Y->parent->data)
             {
@@ -288,7 +362,7 @@ private:
         return Y;
     }
 
-    AVLNode *LeftRotation(AVLNode* Z)
+    AVLNode *LeftRotation(AVLNode *Z)
     {
         //TODO
     }
@@ -306,7 +380,7 @@ private:
     }
 };
 
-template<class T>
+template <class T>
 class Set
 {
 public:
@@ -354,13 +428,14 @@ public:
     }
 };
 
-template<class K, class V>
+template <class K, class V>
 struct Pair
 {
     K key;
     V value;
 
-    Pair(K key){
+    Pair(K key)
+    {
         this->key = key;
     }
 
@@ -386,14 +461,13 @@ struct Pair
     }
 };
 
-template<class K, class V>
+template <class K, class V>
 class Map
 {
 public:
-
     Map()
     {
-        tree = new AVL<Pair<K,V>>();
+        tree = new AVL<Pair<K, V>>();
     }
 
     int size()
@@ -403,21 +477,20 @@ public:
 
     V get(K key)
     {
-        Pair<K,V> p = Pair<K,V>(key);
-        Pair<K,V> found = tree->find(p);
-        if(found == nullptr)
+        Pair<K, V> p = Pair<K, V>(key);
+        Pair<K, V> found = tree->find(p);
+        if (found == nullptr)
         {
             return nullptr;
         }
         return found.value;
-
     }
 
     void set(K key, V value)
     {
         // add a key value pair to the map, if the key already exists, delete it and add the new value key pair
-        Pair<K,V> p = Pair<K,V>(key, value);
-        if(tree->contains(p))
+        Pair<K, V> p = Pair<K, V>(key, value);
+        if (tree->contains(p))
         {
             tree->remove(p);
         }
@@ -427,7 +500,7 @@ public:
     bool exists(K key)
     {
         //returns true if the key exists on the map
-        Pair<K,V> p = Pair<K,V>(key);
+        Pair<K, V> p = Pair<K, V>(key);
         return tree->contains(p);
     }
 
@@ -437,13 +510,14 @@ public:
     }
 
 private:
-    AVL<Pair<K,V>> *tree;
+    AVL<Pair<K, V>> *tree;
 };
 
-int main(){
-    Pair<int, char*> p1 = Pair<int, char*>(1, "hola");
-    Pair<int, char*> p2 = Pair<int, char*>(2, "hola");
-    Pair<int, char*> p3 = Pair<int, char*>(1, "chau");
+int main()
+{
+    Pair<int, char *> p1 = Pair<int, char *>(1, "hola");
+    Pair<int, char *> p2 = Pair<int, char *>(2, "hola");
+    Pair<int, char *> p3 = Pair<int, char *>(1, "chau");
 
     std::cout << (p1 < p2) << " | " << (p1 > p2) << " | " << (p1 == p3) << std::endl;
 }

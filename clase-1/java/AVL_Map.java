@@ -1,5 +1,62 @@
+import java.util.Iterator;
+
 public class AVL_Map {
-  public static class AVL<T extends Comparable<T>> {
+
+
+  public static class AVL<T extends Comparable<T>> implements Iterable<T> {
+    public class AVLIterator implements Iterator<T> {
+
+      public class IteratorNode{
+        public T data;
+        public IteratorNode next;
+
+        public IteratorNode(){
+          this.next = null;
+        }
+
+        public IteratorNode(T data){
+          this.data = data;
+          this.next = null;
+        }
+      }
+
+      private IteratorNode actual;
+
+      public AVLIterator(AVLNode root){
+        actual = new IteratorNode();
+        actual.next = load(root);
+      }
+
+
+      @Override
+      public boolean hasNext() {
+        return this.actual.next != null;
+      }
+
+      @Override
+      public T next() {
+        this.actual = this.actual.next;
+        return this.actual.data;
+      }
+
+      private IteratorNode load(AVLNode node){
+        if(node == null){
+          return null;
+        }
+        else if(node.left == null){
+          var itNode = new IteratorNode(node.data);
+          itNode.next = load(node.right);
+          return itNode;
+        }
+        else{
+          var itNode = load(node.left);
+          itNode.next = new IteratorNode(node.data);
+          itNode.next.next = load(node.right);
+          return itNode;
+        }
+      }
+    }    
+
     public class AVLNode {
       public T data;
       public AVLNode left;
@@ -24,6 +81,27 @@ public class AVL_Map {
 
     private AVLNode root;
     private int elements;
+
+    public T getMax(){
+      if(root == null)
+        return null;
+      AVLNode node = this.root;
+      while(node.right != null){
+        node = node.right;
+      }
+      return node.data;
+    }
+
+    public T getMin(){
+      if(root == null)
+        return null;
+      AVLNode node = this.root;
+      while(node.left != null){
+        node = node.left;
+      }
+      return node.data;
+    }
+
 
     public void add(T data) {
       elements++;
@@ -236,10 +314,15 @@ public class AVL_Map {
       return null;
     }
 
+    @Override
+    public Iterator<T> iterator() {
+      return new AVLIterator(root);
+    }
     
   }
 
   public static class Set<T extends Comparable<T>>{
+    private AVL<T> tree;
     public int size(){
       //TODO
       return 0;
@@ -266,6 +349,9 @@ public class AVL_Map {
     }
 
     public Set<T> join(Set<T> other){
+      var it = other.tree.iterator();
+      T data = it.
+      while(it.hasNext()){
       // returns the union of this set and other set
       //TODO
       return null;
