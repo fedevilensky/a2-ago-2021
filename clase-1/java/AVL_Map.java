@@ -104,10 +104,15 @@ public class AVL_Map {
         // node with only one child or no child
         if (node.left == null && node.right == null)
           return null;
-        else if (node.left == null)
+        else if (node.left == null){
+          node.right.parent = node.parent;
           return node.right;
-        else if (node.right == null)
+        }
+        else if (node.right == null){
+          node.left.parent = node.parent;
           return node.left;
+        }
+        
 
         // we need to find either biggest to the left or smallest to the right
         node.data = findMax(node.left);

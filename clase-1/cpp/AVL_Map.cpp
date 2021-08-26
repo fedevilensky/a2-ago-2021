@@ -1,6 +1,6 @@
 #include <stdlib.h> //abs
 #include <algorithm> //max
-
+#include <iostream> //cout
 
 template <class T>
 class AVL
@@ -185,8 +185,8 @@ private:
                 node->left = remove(node->left, node->data);
                 //node->right = ;
             }
-            node->updateHeight();
         }
+        node->updateHeight();
         return balance(node);
     }
 
@@ -355,65 +355,95 @@ public:
 };
 
 template<class K, class V>
+struct Pair
+{
+    K key;
+    V value;
+
+    Pair(K key){
+        this->key = key;
+    }
+
+    Pair(K key, V value)
+    {
+        this->key = key;
+        this->value = value;
+    }
+
+    bool operator<(const Pair &other)
+    {
+        return key < other.key;
+    }
+
+    bool operator>(const Pair &other)
+    {
+        return key > other.key;
+    }
+
+    bool operator==(const Pair &other)
+    {
+        return key == other.key;
+    }
+};
+
+template<class K, class V>
 class Map
 {
-    struct Pair
-    {
-        K key;
-        V value;
-
-        Pair(K key, V value)
-        {
-            this->key = key;
-            this->value = value;
-        }
-
-        bool operator<(const Pair &other)
-        {
-            return key < other.key;
-        }
-
-        bool operator>(const Pair &other)
-        {
-            return key > other.key;
-        }
-
-        bool operator==(const Pair &other)
-        {
-            return key == other.key;
-        }
-    };
-
 public:
+
+    Map()
+    {
+        tree = new AVL<Pair<K,V>>();
+    }
+
     int size()
     {
-        //TODO
+        tree->size();
     }
 
     V get(K key)
     {
-        Pair p = Pair(key, nullptr);
-        //returns value asosiated with the key
-        //TODO
+        Pair<K,V> p = Pair<K,V>(key);
+        Pair<K,V> found = tree->find(p);
+        if(found == nullptr)
+        {
+            return nullptr;
+        }
+        return found.value;
+
     }
 
     void set(K key, V value)
     {
         // add a key value pair to the map, if the key already exists, delete it and add the new value key pair
-        //TODO
+        Pair<K,V> p = Pair<K,V>(key, value);
+        if(tree->contains(p))
+        {
+            tree->remove(p);
+        }
+        tree->add(p);
     }
 
     bool exists(K key)
     {
         //returns true if the key exists on the map
-        //TODO
+        Pair<K,V> p = Pair<K,V>(key);
+        return tree->contains(p);
     }
 
     void clear()
     {
-        //TODO
+        tree->clear();
     }
+
+private:
+    AVL<Pair<K,V>> *tree;
 };
 
 int main(){
+    Pair<int, char*> p1 = Pair<int, char*>(1, "hola");
+    Pair<int, char*> p2 = Pair<int, char*>(2, "hola");
+    Pair<int, char*> p3 = Pair<int, char*>(1, "chau");
+
+    std::cout << (p1 < p2) << " | " << (p1 > p2) << " | " << (p1 == p3) << std::endl;
 }
