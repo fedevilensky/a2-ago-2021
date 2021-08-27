@@ -49,7 +49,7 @@ wsl --set-default-version 2
 
 # Instalar Compiladores
 - C++ - Podemos elegir el compilador `clang++` o `g++`
-  - Ubuntu: `sudo apt install -y clang` o `sudo apt install -y g++`
+  - Ubuntu: primero tenemos que cargar la base de datos del package manager, `sudo apt update`, luego `sudo apt install -y clang` o `sudo apt install -y g++`
     - Lo que significa cada comando
       - `sudo` nos da permisos de administrador ("Super User DO")
       - `apt install` apt es el package manager (como un app store) install es el comando para instalar un paquete
