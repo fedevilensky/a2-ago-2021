@@ -30,13 +30,14 @@ public class AVL_Map {
 
       @Override
       public boolean hasNext() {
-        return this.actual.next != null;
+        return this.actual != null;
       }
 
       @Override
       public T next() {
+        T data = this.actual.data;
         this.actual = this.actual.next;
-        return this.actual.data;
+        return data;
       }
 
       private IteratorNode load(AVLNode node){
@@ -50,8 +51,11 @@ public class AVL_Map {
         }
         else{
           var itNode = load(node.left);
-          itNode.next = new IteratorNode(node.data);
-          itNode.next.next = load(node.right);
+          var aux = itNode;
+          while(aux.next != null)
+            aux = aux.next;
+          aux.next = new IteratorNode(node.data);
+          aux.next.next = load(node.right);
           return itNode;
         }
       }

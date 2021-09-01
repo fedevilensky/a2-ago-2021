@@ -3,64 +3,16 @@
 #include <iostream>  //cout
 
 template <class T>
+class Iterator
+{
+public:
+    virtual bool hasNext() = 0;
+    virtual T next() = 0;
+};
+
+template <class T>
 class AVL
 {
-    class AVLIterator
-    {
-        struct IteratorNode
-        {
-            T data;
-            IteratorNode next;
-
-            IteratorNode(T data)
-            {
-                this.data = data;
-                this.next = null;
-            }
-        };
-
-    public:
-        AVLIterator(AVLNode root)
-        {
-            actual = load(root);
-        }
-
-        boolean hasNext()
-        {
-            return this.actual->next != nullptr;
-        }
-
-        T next()
-        {
-            this.actual = this.actual->next;
-            return this.actual->data;
-        }
-
-    private:
-        IteratorNode *actual;
-
-        IteratorNode load(AVLNode node)
-        {
-            if (node == nullptr)
-            {
-                return nullptr;
-            }
-            else if (node->left == nullptr)
-            {
-                auto itNode = new IteratorNode(node->data);
-                itNode->next = load(node->right);
-                return itNode;
-            }
-            else
-            {
-                auto itNode = load(node->left);
-                itNode->next = new IteratorNode(node->data);
-                itNode->next->next = load(node->right);
-                return itNode;
-            }
-        }
-    };
-
     struct AVLNode
     {
         AVLNode *left;
@@ -99,11 +51,69 @@ class AVL
         }
     };
 
-public:
-
-    AVLIterator iterator()
+    class AVLIterator : public Iterator<T>
     {
-        return AVLIterator(root);
+    private:
+        struct IteratorNode
+        {
+            T data;
+            IteratorNode *next;
+
+            IteratorNode(T data)
+            {
+                this->data = data;
+                this->next = nullptr;
+            }
+        };
+        IteratorNode *actual;
+
+        IteratorNode *load(AVLNode *node)
+        {
+            if (node == nullptr)
+            {
+                return nullptr;
+            }
+            else if (node->left == nullptr)
+            {
+                auto itNode = new IteratorNode(node->data);
+                itNode->next = load(node->right);
+                return itNode;
+            }
+            else
+            {
+                auto itNode = load(node->left);
+                auto aux = itNode;
+                while (aux->next)
+                    aux = aux->next;
+                aux->next = new IteratorNode(node->data);
+                aux->next->next = load(node->right);
+                return itNode;
+            }
+        }
+
+    public:
+        AVLIterator(AVLNode *root)
+        {
+            actual = load(root);
+        }
+
+        bool hasNext() override
+        {
+            return this->actual != nullptr;
+        }
+
+        T next() override
+        {
+            T data = this->actual->data;
+            this->actual = this->actual->next;
+            return data;
+        }
+    };
+
+public:
+    Iterator<T> *iterator()
+    {
+        return new AVLIterator(root);
     }
 
     void add(T data)
@@ -386,46 +396,82 @@ class Set
 public:
     int size()
     {
-        //TODO
+        return tree.size();
     }
 
     bool contains(T data)
     {
-        //TODO
+        return tree.contains(data);
     }
 
     void clear()
     {
-        //TODO
+        tree.clear();
     }
 
+    //post: el dato existe en el Set
     void add(T data)
     {
-        //TODO
+        if (!tree.contains(data))
+        {
+            tree.add(data);
+        }
     }
 
     void remove(T data)
     {
-        //TODO
+        tree.remove(data);
     }
 
-    Set<T> join(Set<T> *other)
+    void join(Set<T> *other)
     {
+        auto iter = other->iterator();
+        while (iter->hasNext())
+        {
+            T otherData = iter->next();
+            this->add(otherData);
+        }
         // returns the union of this set and other set
         // TODO
     }
 
-    Set<T> intersect(Set<T> *other)
+    void intersect(Set<T> *other)
     {
-        // returns the insersection of this set and other set
-        //TODO
+        auto iter = this->iterator();
+        while (iter->hasNext())
+        {
+            T data = iter->next();
+            if (!other->contains(data))
+            {
+                this->remove(data);
+            }
+        }
     }
 
-    Set<T> difference(Set<T> *other)
+    void difference(Set<T> *other)
     {
-        // returns the difference of this set and other set
-        //TODO
+        auto iter = other->iterator();
+        while (iter->hasNext())
+        {
+            T otherData = iter->next();
+            if (this->contains(otherData))
+            {
+                this->remove(otherData);
+            }
+            else
+            {
+                this->add(otherData);
+            }
+        }
     }
+
+    Iterator<T> *iterator()
+    {
+        return tree.iterator();
+    }
+
+private:
+    AVL<T> tree = AVL<T>();
 };
 
 template <class K, class V>
@@ -515,9 +561,17 @@ private:
 
 int main()
 {
-    Pair<int, char *> p1 = Pair<int, char *>(1, "hola");
-    Pair<int, char *> p2 = Pair<int, char *>(2, "hola");
-    Pair<int, char *> p3 = Pair<int, char *>(1, "chau");
+    AVL<int> tree;
+    tree.add(10);
+    tree.add(120);
+    tree.add(101);
+    tree.add(103);
+    tree.add(140);
+    tree.add(1570);
 
-    std::cout << (p1 < p2) << " | " << (p1 > p2) << " | " << (p1 == p3) << std::endl;
+    Iterator<int> *iter = tree.iterator();
+    while (iter->hasNext())
+    {
+        std::cout << iter->next() << std::endl;
+    }
 }
