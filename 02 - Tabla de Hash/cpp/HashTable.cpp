@@ -118,12 +118,12 @@ private:
         K key;
         V value;
 
-        bool operator == (const Pair& other) override{
+        bool operator == (const Pair& other) {
             return key == other.key;
         }
     };
 
-    int std::list<Pair> *table;
+    std::list<Pair> *table;
     Hasher<K> *hasher;
 };
 
