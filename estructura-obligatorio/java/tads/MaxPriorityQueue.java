@@ -28,5 +28,5 @@ class MaxPriorityQueue {
   }
 
   private Object[] heap; // array of pairs<T, int>
-  private HashTable<T, position> table; //su implementacion
+  private HashTable<T, Integer> table; //su implementacion
 }
